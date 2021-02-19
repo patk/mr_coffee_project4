@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/patk/mr_coffee_project4/issues"
   },
-  "homepage": "https://github.com/patk/mr_coffee_project4#readme"
+  "homepage": "https://github.com/patk/mr_coffee_project4#readme",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
+  }
 }
