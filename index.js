@@ -1,10 +1,19 @@
 // set up express
 const express = require("express");
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// set up morgan
+const morgan = require("morgan");
+app.use(morgan("dev"));
+
+// set up database
+const database = require("./database");
+
+// port
 const PORT = 9000
-
-//start listening for network activity 
-app.listen(PORT, ()=> {
+// start listening for network activity 
+app.listen(PORT, () => {
     console.log('server is listening on localhost', PORT)
 })
 
@@ -14,6 +23,7 @@ app.listen(PORT, ()=> {
 
 app.set('view engine', 'ejs')
 
+// routes
 app.get('/login', (req, res) => {
     res.render('pages/content_users_new', {
         
@@ -79,3 +89,5 @@ app.post('/login', (req, res) => {
     
 
 })
+
+
