@@ -7,6 +7,7 @@
     "create-database": "psql postgres -h localhost -d mr_coffee_project4 -f sql/create_database.sql",
     "create-tables": "psql postgres -h localhost -d mr_coffee_project4 -f create_tables.sql",
     "seed_users_table": "psql postgres -h localhost -d mr_coffee_project4 -f seed_users_table.sql",
+    "seed_schedules_table": "psql postgres -h localhost -d mr_coffee_project4 -f seed_schedules_table.sql",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
