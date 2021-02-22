@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "create-database": "psql postgres -h localhost -d mr_coffee_project4 -f sql/create_database.sql",
+    "create-tables": "psql postgres -h localhost -d mr_coffee_project4 -f create_tables.sql",
+    "seed_users_table": "psql postgres -h localhost -d mr_coffee_project4 -f seed_users_table.sql",
+    "seed_schedules_table": "psql postgres -h localhost -d mr_coffee_project4 -f seed_schedules_table.sql",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,6 +24,8 @@
   "dependencies": {
     "ejs": "^3.1.6",
     "express": "^4.17.1",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "pg": "^8.5.1",
+    "pg-promise": "^10.9.2"
   }
 }
