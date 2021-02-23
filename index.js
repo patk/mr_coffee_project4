@@ -9,7 +9,14 @@ const morgan = require("morgan");
 app.use(morgan("dev"));
 
 // set up database
-//const database = require("./database");
+const database = require("./database");
+
+// set up view engine
+app.set("view engine", "ejs");
+
+// hash password - crypto library
+const crypto = require("crypto");
+const { getMaxListeners } = require("process");
 
 // port
 const PORT = 9000;
@@ -22,18 +29,42 @@ app.listen(PORT, () => {
 
 //starting templating
 
-app.set("view engine", "ejs");
-
 // routes
+app.get("/login", (req, res) => {
+  res.render("pages/content_login_page");
+});
+
+app.post("/login", (req, res) => {
+  const email = req.body.email;
+  const hashedPassword = crypto
+    .createHash("sha256")
+    .update(req.body.password)
+    .digest("hex");
+  console.log("EMAIL IS: " + email);
+  console.log("HASHED PASSWORD IS: " + hashedPassword);
+  // code login logic here
+  // search database to see if username and password match
+  database
+    .query("SELECT * FROM users WHERE email = $1", [email])
+    .then((userEmail) => {
+      if (userEmail.length === 0) {
+        console.log("User doesn't exist");
+      } else {
+        if (hashedPassword === userEmail[0].password) {
+          console.log("Correct email and password -> Login successful");
+        } else {
+          console.log("Incorrect password");
+        }
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
 app.get("/", (req, res) => {
   res.send("Homepage");
 });
-app.get("/login", (req, res) => {
-  res.render("pages/content_users_new", {});
-});
-
-//import crypto library
-const crypto = require("crypto");
 
 /*
 
