@@ -16,7 +16,6 @@ app.set("view engine", "ejs");
 
 // hash password - crypto library
 const crypto = require("crypto");
-const { getMaxListeners } = require("process");
 
 // port
 const PORT = 9000;
@@ -40,8 +39,6 @@ app.post("/login", (req, res) => {
     .createHash("sha256")
     .update(req.body.password)
     .digest("hex");
-  console.log("EMAIL IS: " + email);
-  console.log("HASHED PASSWORD IS: " + hashedPassword);
   // code login logic here
   // search database to see if username and password match
   database
@@ -52,6 +49,8 @@ app.post("/login", (req, res) => {
       } else {
         if (hashedPassword === userEmail[0].password) {
           console.log("Correct email and password -> Login successful");
+          // redirect to homepage
+          res.redirect("/");
         } else {
           console.log("Incorrect password");
         }
@@ -64,6 +63,10 @@ app.post("/login", (req, res) => {
 
 app.get("/", (req, res) => {
   res.send("Homepage");
+});
+
+app.get("/signup", (req, res) => {
+  res.send("Signup page");
 });
 
 /*
