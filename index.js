@@ -86,30 +86,63 @@ app.get("/signup", (req, res) => {
   res.send("Signup page");
 });
 
-/*
 
-//attempt to authenticate log in no. 1
+//signin page validation and post 
 
-app.post('/login', (req, res) => {
+app.post('/signup', (req, res) => {
 
-users.findOne({
-    email: req.body.email
+  valid = true;
+
+  if(!firstname.value.match(letters)){
+      firstname.style.border = "1px solid red"
+      valid = false;
+     }
+
+
+  if(!lastname.value.match(letters)){
+      lastname.style.border = "1px solid red"
+      valid = false;
+  }
+
+
+  if(!email.value.match(emailAdd)){
+      email.style.border = "1px solid red"
+      valid = false;
+     }
+
+  
+  if(!password.value.match(letterNumber)){
+      password.style.border = "1px solid red"
+      valid = false;
+     }
+
+  if(!conf-password === password){
+      password.style.border = "1px solid red"
+      valid = false;
+     }
+
+  //If the email provided already exists in the database, registration must not be possible.
+  
+  if (valid) {
+    
+    database.query("INSERT INTO schedule(surname, firstname, email, password)values($1, $2, $3, $4);", [req.body.lastname, req.body.firstname, req.body.email, req.body.password])
+  
+    .then((newUser) => {
+      res.redirect("/login")
+
+  })
+
+  .catch((err) => {
+    //add error messgae 
+  })
+
+  }
+
+
 })
 
-.then (users => {
-    if (users.password === req.body.password){
-        
-        res.render('pages/content_homepage', {
-        
-        })
 
 
-    }
-})
-
-})
-
-*/
 
 //attempt to authenticate log in no. 2
 /*
