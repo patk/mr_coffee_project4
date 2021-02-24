@@ -43,16 +43,18 @@ app.post("/login", (req, res) => {
   // search database to see if username and password match
   database
     .query("SELECT * FROM users WHERE email = $1", [email])
-    .then((userEmail) => {
-      if (userEmail.length === 0) {
+    .then((user) => {
+      if (user.length === 0) {
         console.log("User doesn't exist");
+        res.redirect("/login");
       } else {
-        if (hashedPassword === userEmail[0].password) {
+        if (hashedPassword === user[0].password) {
           console.log("Correct email and password -> Login successful");
           // redirect to homepage
           res.redirect("/");
         } else {
           console.log("Incorrect password");
+          res.redirect("/login");
         }
       }
     })
@@ -62,7 +64,22 @@ app.post("/login", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Homepage");
+  database.query("SELECT * FROM schedules").then((schedules) => {
+    res.render("pages/content_home", {
+      schedules: schedules,
+    });
+  });
+});
+
+app.get("/:userId(\\d+)/", (req, res) => {
+  const userId = req.params.userId;
+  database
+    .query("SELECT * FROM schedules WHERE user_id = $1", [userId])
+    .then((schedules) => {
+      res.render("pages/content_home", {
+        schedules: schedules,
+      });
+    });
 });
 
 app.get("/signup", (req, res) => {

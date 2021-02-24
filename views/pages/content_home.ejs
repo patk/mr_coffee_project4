@@ -1,0 +1,17 @@
+<h2>All schedules:</h2>
+<table style="border: 1px solid black">
+  <tr>
+    <th>User ID</th>
+    <th>Day</th>
+    <th>Start time</th>
+    <th>End time</th>
+  </tr>
+  <% for(let i = 0; i < schedules.length; i++) { %>
+  <tr>
+    <td><%= schedules[i].user_id %></td>
+    <td><%= schedules[i].day %></td>
+    <td><%= schedules[i].start_time %></td>
+    <td><%= schedules[i].end_time %></td>
+  </tr>
+  <% } %>
+</table>
