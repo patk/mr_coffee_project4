@@ -24,7 +24,7 @@ app.set("view engine", "ejs");
 const crypto = require("crypto");
 
 // port
-const PORT = 9000;
+const PORT = 9100;
 // start listening for network activity
 app.listen(PORT, () => {
   console.log("server is listening on localhost", PORT);
@@ -79,6 +79,8 @@ app.get("/", (req, res) => {
 
 app.get("/:userId(\\d+)/", (req, res) => {
   const userId = req.params.userId;
+  var datetime = new Date();
+  const currentDate = datetime.toString().slice(0, 15);
   database
     //.query("SELECT * FROM schedules WHERE user_id = $1", [userId])
     .query(
@@ -98,6 +100,7 @@ app.get("/:userId(\\d+)/", (req, res) => {
         schedules: schedules,
         firstname: firstname,
         surname: surname,
+        date: currentDate,
       });
     });
 });
