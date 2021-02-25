@@ -1,4 +1,4 @@
-<h2>Login:</h2>
+<!--<h2>Login:</h2>
 <div class="login-form">
   <form id="login-form" method="POST" form action="/login">
     <div>
@@ -14,4 +14,34 @@
   </form>
 </div>
 
-<a href="/signup">Sign up</a>
+<a href="/signup">Sign up</a>-->
+<link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo&display=swap"
+      rel="stylesheet"
+    />
+<div id="login-form">
+  <div class="login-header">
+      <img src="assets/logo_dark.png" alt="Mr.Coffee Logo (Dark)" />
+      <h1>Login</h1>
+  </div>
+  <div class="login-fields">
+    <form id="login-form" method="POST" form action="/login">
+      <div>
+        <input type="email" name="email" id="email" placeholder="Email" required />
+      </div>
+    
+      <div>
+        <input type="password" name="password" id="password" placeholder="Password" required />
+      </div>
+  </div>
+  <div class="button-wrapper">
+    <button>Login</button>
+  </div>
+</div>
+
+<div class="link-wrapper">
+  <a href="/signup">Sign up</a>
+</div>
+
