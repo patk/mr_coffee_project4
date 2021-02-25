@@ -1,15 +1,22 @@
 <%- include('layout') -%>
+<h1>Welcome <%= firstname %>!</h1>
 <h2>All schedules:</h2>
+
 <table style="border: 1px solid black">
   <tr>
     <th>User ID</th>
+    <th>First Name</th>
+    <th>Last Name</th>
     <th>Day</th>
-    <th>Start time</th>
-    <th>End time</th>
+    <th>Start Time</th>
+    <th>End Time</th>
   </tr>
+
   <% for(let i = 0; i < schedules.length; i++) { %>
   <tr>
     <td><%= schedules[i].user_id %></td>
+    <td><%= schedules[i].firstname %></td>
+    <td><%= schedules[i].surname %></td>
     <td><%= schedules[i].day %></td>
     <td><%= schedules[i].start_time %></td>
     <td><%= schedules[i].end_time %></td>

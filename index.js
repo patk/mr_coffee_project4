@@ -57,7 +57,7 @@ app.post("/login", (req, res) => {
         if (hashedPassword === user[0].password) {
           console.log("Correct email and password -> Login successful");
           // redirect to homepage
-          res.redirect("/");
+          res.redirect("/" + user[0].user_id);
         } else {
           console.log("Incorrect password");
           res.redirect("/login");
@@ -80,10 +80,24 @@ app.get("/", (req, res) => {
 app.get("/:userId(\\d+)/", (req, res) => {
   const userId = req.params.userId;
   database
-    .query("SELECT * FROM schedules WHERE user_id = $1", [userId])
+    //.query("SELECT * FROM schedules WHERE user_id = $1", [userId])
+    .query(
+      "SELECT schedules.user_id, users.firstname, users.surname, schedules.day, schedules.start_time, schedules.end_time FROM schedules LEFT JOIN users ON schedules.user_id = users.user_id;"
+    )
+    //.query("SELECT * FROM schedules")
     .then((schedules) => {
+      var firstname = "";
+      var surname = "";
+      for (let i = 0; i < schedules.length; i++) {
+        if (schedules[i].user_id === Number(userId)) {
+          firstname = schedules[i].firstname;
+          surname = schedules[i].surname;
+        }
+      }
       res.render("pages/content_home", {
         schedules: schedules,
+        firstname: firstname,
+        surname: surname,
       });
     });
 });
