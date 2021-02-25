@@ -108,43 +108,41 @@ app.get("/:userId(\\d+)/", (req, res) => {
 app.get("/signup", (req, res) => {
   res.render("pages/content_signup");
 });
+//regular expressions
+var letters = /^[A-Za-z]+$/;
+var numbers = /^[0-9]+$/;
+var letterNumber = /^[\.a-zA-Z0-9,!? ]*$/;
+var emailAdd = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+//signin page validation and post
 
 app.post("/signup", (req, res) => {
   valid = true;
-
   if (!firstname.value.match(letters)) {
     firstname.style.border = "1px solid red";
     valid = false;
   }
-
   if (!lastname.value.match(letters)) {
     lastname.style.border = "1px solid red";
     valid = false;
   }
-
   if (!email.value.match(emailAdd)) {
     email.style.border = "1px solid red";
     valid = false;
   }
-
   if (!password.value.match(letterNumber)) {
     password.style.border = "1px solid red";
     valid = false;
   }
-
   if (!conf - password === password) {
     password.style.border = "1px solid red";
     valid = false;
   }
-
   //If the email provided already exists in the database, registration must not be possible.
-
   if (valid) {
     const hash = crypto
       .createHash("sha256")
       .update(req.body.password)
       .digest("hex");
-
     database
       .query(
         "INSERT INTO schedule(surname, firstname, email, password)values($1, $2, $3, $4);",
