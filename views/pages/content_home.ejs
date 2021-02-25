@@ -1,0 +1,29 @@
+<%- include('layout') -%>
+<div class="banner">
+  <h1>Welcome <%= firstname %>!</h1>
+  <h1><%= date %></h1>
+</div>
+
+<h2>All schedules:</h2>
+
+<table>
+  <tr>
+    <th>User ID</th>
+    <th>First Name</th>
+    <th>Last Name</th>
+    <th>Day</th>
+    <th>Start Time</th>
+    <th>End Time</th>
+  </tr>
+
+  <% for(let i = 0; i < schedules.length; i++) { %>
+  <tr>
+    <td><%= schedules[i].user_id %></td>
+    <td><%= schedules[i].firstname %></td>
+    <td><%= schedules[i].surname %></td>
+    <td><%= schedules[i].day %></td>
+    <td><%= schedules[i].start_time.toString().slice(0, 21) %></td>
+    <td><%= schedules[i].end_time.toString().slice(0, 21) %></td>
+  </tr>
+  <% } %>
+</table>

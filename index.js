@@ -8,6 +8,12 @@ app.use(express.urlencoded({ extended: true }));
 const morgan = require("morgan");
 app.use(morgan("dev"));
 
+// static files
+const path = require("path");
+app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
+//app.use("/static", express.static(path.join(__dirname, "public")));
+
 // set up database
 const database = require("./database");
 
@@ -16,7 +22,7 @@ app.set("view engine", "ejs");
 
 
 // port
-const PORT = 9000;
+const PORT = 9100;
 // start listening for network activity
 app.listen(PORT, () => {
   console.log("server is listening on localhost", PORT);
@@ -41,16 +47,18 @@ app.post("/login", (req, res) => {
   // search database to see if username and password match
   database
     .query("SELECT * FROM users WHERE email = $1", [email])
-    .then((userEmail) => {
-      if (userEmail.length === 0) {
+    .then((user) => {
+      if (user.length === 0) {
         console.log("User doesn't exist");
+        res.redirect("/login");
       } else {
-        if (hashedPassword === userEmail[0].password) {
+        if (hashedPassword === user[0].password) {
           console.log("Correct email and password -> Login successful");
           // redirect to homepage
-          res.redirect("/");
+          res.redirect("/" + user[0].user_id);
         } else {
           console.log("Incorrect password");
+          res.redirect("/login");
         }
       }
     })
@@ -60,13 +68,52 @@ app.post("/login", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Homepage");
+  database.query("SELECT * FROM schedules").then((schedules) => {
+    res.render("pages/content_home", {
+      schedules: schedules,
+    });
+  });
+});
+
+app.get("/:userId(\\d+)/", (req, res) => {
+  const userId = req.params.userId;
+  var datetime = new Date();
+  const currentDate = datetime.toString().slice(0, 15);
+  database
+    //.query("SELECT * FROM schedules WHERE user_id = $1", [userId])
+    .query(
+      "SELECT schedules.user_id, users.firstname, users.surname, schedules.day, schedules.start_time, schedules.end_time FROM schedules LEFT JOIN users ON schedules.user_id = users.user_id;"
+    )
+    //.query("SELECT * FROM schedules")
+    .then((schedules) => {
+      var firstname = "";
+      var surname = "";
+      for (let i = 0; i < schedules.length; i++) {
+        if (schedules[i].user_id === Number(userId)) {
+          firstname = schedules[i].firstname;
+          surname = schedules[i].surname;
+        }
+      }
+      res.render("pages/content_home", {
+        schedules: schedules,
+        firstname: firstname,
+        surname: surname,
+        date: currentDate,
+      });
+    });
 });
 
 app.get("/signup", (req, res) => {
-  res.send("Signup page");
+  res.render("pages/content_signup");
 });
 
+
+//regular expressions
+
+var letters = /^[A-Za-z]+$/;
+var numbers = /^[0-9]+$/;
+var letterNumber = /^[\.a-zA-Z0-9,!? ]*$/;
+var emailAdd = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 //signin page validation and post 
 
@@ -74,37 +121,34 @@ app.get("/signup", (req, res) => {
 const crypto = require("crypto");
 
 
-app.post('/signup', (req, res) => {
 
+app.post("/signup", (req, res) => {
   valid = true;
 
-  if(!firstname.value.match(letters)){
-      firstname.style.border = "1px solid red"
-      valid = false;
-     }
-
-
-  if(!lastname.value.match(letters)){
-      lastname.style.border = "1px solid red"
-      valid = false;
+  if (!firstname.value.match(letters)) {
+    firstname.style.border = "1px solid red";
+    valid = false;
   }
 
+  if (!lastname.value.match(letters)) {
+    lastname.style.border = "1px solid red";
+    valid = false;
+  }
 
-  if(!email.value.match(emailAdd)){
-      email.style.border = "1px solid red"
-      valid = false;
-     }
+  if (!email.value.match(emailAdd)) {
+    email.style.border = "1px solid red";
+    valid = false;
+  }
 
-  
-  if(!password.value.match(letterNumber)){
-      password.style.border = "1px solid red"
-      valid = false;
-     }
+  if (!password.value.match(letterNumber)) {
+    password.style.border = "1px solid red";
+    valid = false;
+  }
 
-  if(!conf-password === password){
-      password.style.border = "1px solid red"
-      valid = false;
-     }
+  if (!conf - password === password) {
+    password.style.border = "1px solid red";
+    valid = false;
+  }
 
   //If the email provided already exists in the database, registration must not be possible.
   
@@ -116,47 +160,12 @@ app.post('/signup', (req, res) => {
   
     .then((newUser) => {
       res.redirect("/login")
+    })
 
-  })
-
-  .catch((err) => {
-    //add error messgae 
-  })
+    .catch((err) => {
+      //add error messgae 
+    })
 
   }
 
-
 })
-
-
-
-
-//attempt to authenticate log in no. 2
-/*
-app.post('/login', (req, res) => {
-
-    const user = users.find(user => user.email === req.body.email)
-    if (user == null) {
-        return res.status (400).send('Email address not found')
-    }
-
-    try {
-        if(await compare(req.body.password, users.password)){
-        res.send('Log in Sucessful')
-    }
-
-    else {
-        res.send ('Log in attempt failed')
-    }
-
-    }
-    
-    catch {
-        res.status(500).send()
-    }
-
-    
-
-    
-
-})*/
