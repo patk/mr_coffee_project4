@@ -109,8 +109,6 @@ app.get("/signup", (req, res) => {
   res.render("pages/content_signup");
 });
 
-//signin page validation and post
-
 app.post("/signup", (req, res) => {
   valid = true;
 
@@ -140,25 +138,22 @@ app.post("/signup", (req, res) => {
   }
 
   //If the email provided already exists in the database, registration must not be possible.
-
+  
   if (valid) {
-    database
-      .query(
-        "INSERT INTO schedule(surname, firstname, email, password)values($1, $2, $3, $4);",
-        [
-          req.body.lastname,
-          req.body.firstname,
-          req.body.email,
-          req.body.password,
-        ]
-      )
 
-      .then((newUser) => {
-        res.redirect("/login");
-      })
+    const hash = crypto.createHash('sha256').update(req.body.password).digest('hex');
+    
+    database.query("INSERT INTO schedule(surname, firstname, email, password)values($1, $2, $3, $4);", [req.body.lastname, req.body.firstname, req.body.email, hash])
+  
+    .then((newUser) => {
+      res.redirect("/login")
 
-      .catch((err) => {
-        //add error messgae
-      });
-  }
-});
+  })
+
+  .catch((err) => {
+    //add error messgae 
+  })
+
+
+
+ 
