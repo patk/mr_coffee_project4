@@ -1,15 +1,15 @@
-
-<h2>Login:</h2>
+<%- include('layout') -%>
+<h2>Sign up:</h2>
 <div class="signup-form">
     <form id="login-form" method="POST" form action="/login">
        
         <div>
-            <label for="lastname" >Last Name</label>
-                <input type="text" name="lastname" id="lastname" required>
+            <label for="surname" >Surname *</label>
+                <input type="text" name="surname" id="surname" required>
         </div>
 
         <div>
-            <label for="firstname">First Name</label>
+            <label for="firstname">First Name *</label>
                 <input type="text" name="firstname" id="firstname" required>
         </div>
 
@@ -21,16 +21,16 @@
 
 
         <div>
-            <label for="password">Password</label>
-                <input type="text" name="password" id="password" >
+            <label for="password">Password *</label>
+                <input type="password" name="password" id="password" >
         </div>
 
         <div>
-            <label for="conf-password">Confirm Password</label>
-                <input type="text" name="conf-password" id="conf-password" >
+            <label for="conf-password">Confirm Password *</label>
+                <input type="password" name="conf-password" id="conf-password" >
         </div>
 
-        <input type="submit">
+        <button type="submit" form="signup-form" value="Submit">Submit</button>
 
     </div>
 

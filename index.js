@@ -8,6 +8,12 @@ app.use(express.urlencoded({ extended: true }));
 const morgan = require("morgan");
 app.use(morgan("dev"));
 
+// static files
+const path = require("path");
+app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
+//app.use("/static", express.static(path.join(__dirname, "public")));
+
 // set up database
 const database = require("./database");
 
@@ -83,93 +89,59 @@ app.get("/:userId(\\d+)/", (req, res) => {
 });
 
 app.get("/signup", (req, res) => {
-  res.send("Signup page");
+  res.render("pages/content_signup");
 });
 
+//signin page validation and post
 
-//signin page validation and post 
-
-app.post('/signup', (req, res) => {
-
+app.post("/signup", (req, res) => {
   valid = true;
 
-  if(!firstname.value.match(letters)){
-      firstname.style.border = "1px solid red"
-      valid = false;
-     }
-
-
-  if(!lastname.value.match(letters)){
-      lastname.style.border = "1px solid red"
-      valid = false;
+  if (!firstname.value.match(letters)) {
+    firstname.style.border = "1px solid red";
+    valid = false;
   }
 
+  if (!lastname.value.match(letters)) {
+    lastname.style.border = "1px solid red";
+    valid = false;
+  }
 
-  if(!email.value.match(emailAdd)){
-      email.style.border = "1px solid red"
-      valid = false;
-     }
+  if (!email.value.match(emailAdd)) {
+    email.style.border = "1px solid red";
+    valid = false;
+  }
 
-  
-  if(!password.value.match(letterNumber)){
-      password.style.border = "1px solid red"
-      valid = false;
-     }
+  if (!password.value.match(letterNumber)) {
+    password.style.border = "1px solid red";
+    valid = false;
+  }
 
-  if(!conf-password === password){
-      password.style.border = "1px solid red"
-      valid = false;
-     }
+  if (!conf - password === password) {
+    password.style.border = "1px solid red";
+    valid = false;
+  }
 
   //If the email provided already exists in the database, registration must not be possible.
-  
+
   if (valid) {
-    
-    database.query("INSERT INTO schedule(surname, firstname, email, password)values($1, $2, $3, $4);", [req.body.lastname, req.body.firstname, req.body.email, req.body.password])
-  
-    .then((newUser) => {
-      res.redirect("/login")
+    database
+      .query(
+        "INSERT INTO schedule(surname, firstname, email, password)values($1, $2, $3, $4);",
+        [
+          req.body.lastname,
+          req.body.firstname,
+          req.body.email,
+          req.body.password,
+        ]
+      )
 
-  })
+      .then((newUser) => {
+        res.redirect("/login");
+      })
 
-  .catch((err) => {
-    //add error messgae 
-  })
-
+      .catch((err) => {
+        //add error messgae
+      });
   }
-
-
-})
-
-
-
-
-//attempt to authenticate log in no. 2
-/*
-app.post('/login', (req, res) => {
-
-    const user = users.find(user => user.email === req.body.email)
-    if (user == null) {
-        return res.status (400).send('Email address not found')
-    }
-
-    try {
-        if(await compare(req.body.password, users.password)){
-        res.send('Log in Sucessful')
-    }
-
-    else {
-        res.send ('Log in attempt failed')
-    }
-
-    }
-    
-    catch {
-        res.status(500).send()
-    }
-
-    
-
-    
-
-})*/
+});
