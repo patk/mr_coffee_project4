@@ -14,8 +14,6 @@ const database = require("./database");
 // set up view engine
 app.set("view engine", "ejs");
 
-// hash password - crypto library
-const crypto = require("crypto");
 
 // port
 const PORT = 9000;
@@ -72,6 +70,10 @@ app.get("/signup", (req, res) => {
 
 //signin page validation and post 
 
+// hash password - crypto library
+const crypto = require("crypto");
+
+
 app.post('/signup', (req, res) => {
 
   valid = true;
@@ -107,8 +109,10 @@ app.post('/signup', (req, res) => {
   //If the email provided already exists in the database, registration must not be possible.
   
   if (valid) {
+
+    const hash = crypto.createHash('sha256').update(req.body.password).digest('hex');
     
-    database.query("INSERT INTO schedule(surname, firstname, email, password)values($1, $2, $3, $4);", [req.body.lastname, req.body.firstname, req.body.email, req.body.password])
+    database.query("INSERT INTO schedule(surname, firstname, email, password)values($1, $2, $3, $4);", [req.body.lastname, req.body.firstname, req.body.email, hash])
   
     .then((newUser) => {
       res.redirect("/login")
