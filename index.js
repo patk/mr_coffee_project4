@@ -20,6 +20,8 @@ const database = require("./database");
 // set up view engine
 app.set("view engine", "ejs");
 
+// hash password - crypto library
+const crypto = require("crypto");
 
 // port
 const PORT = 9100;
@@ -107,6 +109,7 @@ app.get("/signup", (req, res) => {
   res.render("pages/content_signup");
 });
 
+<<<<<<< HEAD
 
 //regular expressions
 
@@ -122,6 +125,8 @@ const crypto = require("crypto");
 
 
 
+=======
+>>>>>>> 1d683bc529fc28d04235adeb817d5ba1bf68805e
 app.post("/signup", (req, res) => {
   valid = true;
 
@@ -151,6 +156,7 @@ app.post("/signup", (req, res) => {
   }
 
   //If the email provided already exists in the database, registration must not be possible.
+<<<<<<< HEAD
   
   if (valid) {
 
@@ -166,6 +172,26 @@ app.post("/signup", (req, res) => {
       //add error messgae 
     })
 
+=======
+
+  if (valid) {
+    const hash = crypto
+      .createHash("sha256")
+      .update(req.body.password)
+      .digest("hex");
+
+    database
+      .query(
+        "INSERT INTO schedule(surname, firstname, email, password)values($1, $2, $3, $4);",
+        [req.body.lastname, req.body.firstname, req.body.email, hash]
+      )
+      .then((newUser) => {
+        res.redirect("/login");
+      })
+      .catch((err) => {
+        //add error messgae
+      });
+>>>>>>> 1d683bc529fc28d04235adeb817d5ba1bf68805e
   }
 
 })
