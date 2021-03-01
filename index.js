@@ -24,7 +24,7 @@ app.set("view engine", "ejs");
 const crypto = require("crypto");
 
 // port
-const PORT = 9100;
+const PORT = 9300;
 // start listening for network activity
 app.listen(PORT, () => {
   console.log("server is listening on localhost", PORT);
@@ -108,8 +108,14 @@ app.get("/:userId(\\d+)/", (req, res) => {
 app.get("/signup", (req, res) => {
   res.render("pages/content_signup");
 });
+//regular expressions
+var letters = /^[A-Za-z]+$/;
+var numbers = /^[0-9]+$/;
+var letterNumber = /^[\.a-zA-Z0-9,!? ]*$/;
+var emailAdd = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+//signin page validation and post
 
-<<<<<<< HEAD
+
 
 //regular expressions
 
@@ -120,49 +126,73 @@ var emailAdd = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]
 
 //signin page validation and post 
 
-// hash password - crypto library
-const crypto = require("crypto");
 
 
-
-=======
->>>>>>> 1d683bc529fc28d04235adeb817d5ba1bf68805e
 app.post("/signup", (req, res) => {
-  valid = true;
 
-  if (!firstname.value.match(letters)) {
+  const surname = req.body.surname
+  const firstname = req.body.firstname
+  const email = req.body.email
+  const password = req.body.password
+  const confPassword = req.body.confPassword
+
+  signupForm.onclick = function(e) {
+    e.preventDefault();   
+  let valid = true;
+
+  /*
+  if (!letters.test(surname)) {
+    surname.style.border = "1px solid red";
+    valid = false;
+  }
+  if (!letters.test(firstname)) {
     firstname.style.border = "1px solid red";
     valid = false;
   }
-
-  if (!lastname.value.match(letters)) {
-    lastname.style.border = "1px solid red";
-    valid = false;
-  }
-
-  if (!email.value.match(emailAdd)) {
+  if (!emailAdd.test(email)) {
     email.style.border = "1px solid red";
     valid = false;
   }
-
-  if (!password.value.match(letterNumber)) {
+  if (!letterNumber.test(password)) {
     password.style.border = "1px solid red";
     valid = false;
   }
+  */
 
-  if (!conf - password === password) {
+
+
+  
+  if (!surname.match(letters)) {
+    surname.style.border = "1px solid red";
+    valid = false;
+  }
+  if (!firstname.match(letters)) {
+    firstname.style.border = "1px solid red";
+    valid = false;
+  }
+  if (!email.match(emailAdd)) {
+    email.style.border = "1px solid red";
+    valid = false;
+  }
+  if (!password.match(letterNumber)) {
     password.style.border = "1px solid red";
     valid = false;
   }
+  if (!confPassword === password) {
+    confPassword.style.border = "1px solid red";
+    valid = false;
+  }
 
+}
+  
   //If the email provided already exists in the database, registration must not be possible.
-<<<<<<< HEAD
+
   
   if (valid) {
 
     const hash = crypto.createHash('sha256').update(req.body.password).digest('hex');
     
-    database.query("INSERT INTO schedule(surname, firstname, email, password)values($1, $2, $3, $4);", [req.body.lastname, req.body.firstname, req.body.email, hash])
+    database.query("INSERT INTO users(surname, firstname, email, password)values($1, $2, $3, $4);", [surname, firstname, email, hash])
   
     .then((newUser) => {
       res.redirect("/login")
@@ -172,26 +202,6 @@ app.post("/signup", (req, res) => {
       //add error messgae 
     })
 
-=======
-
-  if (valid) {
-    const hash = crypto
-      .createHash("sha256")
-      .update(req.body.password)
-      .digest("hex");
-
-    database
-      .query(
-        "INSERT INTO schedule(surname, firstname, email, password)values($1, $2, $3, $4);",
-        [req.body.lastname, req.body.firstname, req.body.email, hash]
-      )
-      .then((newUser) => {
-        res.redirect("/login");
-      })
-      .catch((err) => {
-        //add error messgae
-      });
->>>>>>> 1d683bc529fc28d04235adeb817d5ba1bf68805e
   }
+  })
 
-})
