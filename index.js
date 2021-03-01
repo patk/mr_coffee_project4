@@ -1,6 +1,6 @@
 // set up express and express-session
 const express = require("express");
-const session = require("express-session");
+//const session = require("express-session");
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -16,6 +16,7 @@ const {
 
 const IN_PROD = NODE_ENV === "production";
 
+
 app.use(
   session({
     name: SESS_NAME,
@@ -30,8 +31,10 @@ app.use(
   })
 );
 
+
+
 // port
-const PORT = 9200;
+const PORT = 9400;
 // start listening for network activity
 app.listen(PORT, () => {
   console.log("server is listening on localhost", PORT);
@@ -55,7 +58,9 @@ app.set("view engine", "ejs");
 // hash password - crypto library
 const crypto = require("crypto");
 
+
 var userId = 0;
+
 
 // middleware functions
 const redirectLogin = (req, res, next) => {
@@ -66,6 +71,7 @@ const redirectLogin = (req, res, next) => {
   }
 };
 
+
 const redirectHome = (req, res, next) => {
   if (req.session.userId) {
     res.redirect("/" + userId);
@@ -74,10 +80,14 @@ const redirectHome = (req, res, next) => {
   }
 };
 
+
+
 // routes
 app.get("/login", redirectHome, (req, res) => {
   res.render("pages/content_login_page");
 });
+
+
 
 app.post("/login", redirectHome, (req, res) => {
   const email = req.body.email;
@@ -118,7 +128,7 @@ app.post("/login", redirectHome, (req, res) => {
       schedules: schedules,
     });
   });
-});*/
+});
 
 app.get("/:userId(\\d+)/", redirectLogin, (req, res) => {
   const userId = req.params.userId;
@@ -143,6 +153,7 @@ app.get("/:userId(\\d+)/", redirectLogin, (req, res) => {
     });
 });
 
+
 app.get("/signup", redirectHome, (req, res) => {
   res.render("pages/content_signup");
 });
@@ -163,26 +174,48 @@ app.post("/signup", redirectHome, (req, res) => {
 
   if (!letters.test(surname)) {
     console.log("Invalid surname");
+    res.render('pages/content_signup', {
+    message: "Invalid surname"})
     valid = false;
   }
   if (!letters.test(firstname)) {
     console.log("Invalid firstname");
+    res.render('pages/content_signup', {
+    message: "Invalid first name"})
     valid = false;
   }
   if (!emailAdd.test(email)) {
     console.log("Invalid email");
+    res.render('pages/content_signup', {
+    message: "Invalid email"})
     valid = false;
   }
+
   if (!letterNumber.test(password)) {
     console.log("Invalid password");
+    res.render('pages/content_signup', {
+    message: "Invalid password"})
     valid = false;
   }
   if (confPassword !== password) {
     console.log("Password doesn't match");
+    res.render('pages/content_signup', {
+      message: "Password doesn't match"})
     valid = false;
   }
 
-  //If the email provided already exists in the database, registration must not be possible.
+
+  //If the email provided already exists in the database, registration must not be possible. 
+
+  database
+  .query("SELECT email FROM users WHERE email = $1", [email])
+  .then((email) => {
+    res.render("pages/content_signup", {
+      //add mesagae 
+    });
+  });
+
+  
   if (valid) {
     const hashedPassword = crypto
       .createHash("sha256")
@@ -210,3 +243,33 @@ app.get("/logout", redirectLogin, (req, res) => {
     }
   });
 });
+
+
+//schedule management form 
+app.get("/scheduleManagement", (req, res) => {
+  res.render("pages/content_schedule_mng");
+});
+
+app.post("/signup", (req, res) => {
+  const user_id = 1; //need to find out how to generate session uder_id
+  const day = req.body.day;
+  const start_time = req.body.startingTime;
+  const end_time = req.body.finishingTime;
+  
+
+  database
+      .query(
+        "INSERT INTO schedules(user_id, day, start_time, end_time) VALUES($1, $2, $3, $4);",
+        [user_id, day, start_time, end_time]
+      )
+      .then((newSchedule) => {
+        res.redirect("/scheduleManagement");
+      })
+      .catch((err) => {
+        //add error messgae
+      });
+  }
+);
+
+
+ 

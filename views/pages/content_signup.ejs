@@ -9,6 +9,11 @@
     <div class="form-header">
         <img src="assets/logo_dark.png" alt="Mr.Coffee Logo (Dark)" />
         <h1>Sign up</h1>
+
+        <%if(message){%>
+            <p><%= message %></p>
+        <%}%>
+
     </div>
         <div class="form-fields">
           <form id="signup-form" method="POST" form action="/signup">
@@ -44,8 +49,8 @@
 
       <!-- 
 <h2>Sign up:</h2>
-<div class="signup-form">
-    <form id="login-form" method="POST" form action="/login">
+<div class="signupForm">
+    <form id="signupForm" method="POST" form action="/signup">
        
         <div>
             <label for="surname" >Surname *</label>
@@ -70,11 +75,11 @@
         </div>
 
         <div>
-            <label for="conf-password">Confirm Password *</label>
-                <input type="password" name="conf-password" id="conf-password" >
+            <label for="confPassword">Confirm Password *</label>
+                <input type="password" name="confPassword" id="confPassword" >
         </div>
 
-        <button type="submit" form="signup-form" value="Submit">Submit</button>
+        <input type="submit">
 
     </div>
 
