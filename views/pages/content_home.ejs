@@ -5,9 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Schedule website</title>
-    <!--<script src="index.js">
-      var userId = userId;
-    </script>-->
     <link rel="stylesheet" href="css/style.css" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
@@ -22,12 +19,7 @@
           <img src="assets/full_logo_white.png" alt="Mr.Coffee Full Logo" />
         </div>
         <ul class="nav-links">
-          <li>
-            <a href="/<%=userId%>">Home</a>
-            <!--<a href="/" onclick="location.href=this.href+userId;return false;"
-              >Home</a
-            >-->
-          </li>
+          <li><a href="/<%=userId%>">Home</a></li>
           <li><a href="/">Schedule Management</a></li>
           <li><a href="/logout">Log out</a></li>
         </ul>
@@ -52,9 +44,24 @@
 
       <% for(let i = 0; i < schedules.length; i++) { %>
       <tr>
-        <td><%= schedules[i].user_id %></td>
-        <td><%= schedules[i].firstname %></td>
-        <td><%= schedules[i].surname %></td>
+        <td
+          class="user-link"
+          onclick="location.href='/<%= schedules[i].user_id %>/user'"
+        >
+          <%= schedules[i].user_id %>
+        </td>
+        <td
+          class="user-link"
+          onclick="location.href='/<%= schedules[i].user_id %>/user'"
+        >
+          <%= schedules[i].firstname %>
+        </td>
+        <td
+          class="user-link"
+          onclick="location.href='/<%= schedules[i].user_id %>/user'"
+        >
+          <%= schedules[i].surname %>
+        </td>
         <td><%= schedules[i].day %></td>
         <td><%= schedules[i].start_time.toString().slice(0, 21) %></td>
         <td><%= schedules[i].end_time.toString().slice(0, 21) %></td>
