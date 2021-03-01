@@ -1,4 +1,53 @@
-<%- include('layout') -%>
+<link rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo&display=swap"
+      rel="stylesheet"
+    />
+    <!--<script src="./form_validator.js"></script>-->
+<div class="form">
+    <div class="form-header">
+        <img src="assets/logo_dark.png" alt="Mr.Coffee Logo (Dark)" />
+        <h1>Sign up</h1>
+
+        <%if(message){%>
+            <p><%= message %></p>
+        <%}%>
+
+    </div>
+        <div class="form-fields">
+          <form id="signup-form" method="POST" form action="/signup">
+            <div>
+                <input type="text" name="surname" id="surname" placeholder="Last Name" required>
+            </div>
+    
+            <div>
+                <input type="text" name="firstname" id="firstname" placeholder="First Name" required>
+            </div>
+    
+            <div>
+                <input type="email" name="email" id="email" placeholder="Email" required>
+            </div>
+    
+            <div>
+                <input type="password" name="password" id="password" placeholder="Password" required>
+            </div>
+    
+            <div>
+                <input type="password" name="confPassword" id="confPassword" placeholder="Confirm Password" required>
+            </div>
+
+        </div>
+        <div class="button-wrapper">
+          <button>Sign up</button>
+        </div>
+      </div>
+      
+      <div class="link-wrapper">
+        <a href="/login">Login</a>
+      </div>
+
+      <!-- 
 <h2>Sign up:</h2>
 <div class="signupForm">
     <form id="signupForm" method="POST" form action="/signup">
@@ -34,4 +83,4 @@
 
     </div>
 
-</form>
+</form>-->
