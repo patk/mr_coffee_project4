@@ -1,8 +1,41 @@
-// set up express
+// set up express and express-session
 const express = require("express");
+const session = require("express-session");
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const TWO_HOURS = 1000 * 60 * 60 * 2;
+
+const {
+  NODE_ENV = "development",
+  SESS_NAME = "sid",
+  SESS_SECRET = "keyboard-cat",
+  SESS_LIFETIME = TWO_HOURS,
+} = process.env;
+
+const IN_PROD = NODE_ENV === "production";
+
+app.use(
+  session({
+    name: SESS_NAME,
+    resave: false,
+    saveUninitialized: false,
+    secret: SESS_SECRET,
+    cookie: {
+      maxAge: SESS_LIFETIME,
+      sameSite: true,
+      secure: IN_PROD,
+    },
+  })
+);
+
+// port
+const PORT = 9200;
+// start listening for network activity
+app.listen(PORT, () => {
+  console.log("server is listening on localhost", PORT);
+});
 
 // set up morgan
 const morgan = require("morgan");
@@ -12,7 +45,6 @@ app.use(morgan("dev"));
 const path = require("path");
 app.use(express.static("public"));
 app.use(express.static(path.join(__dirname, "public")));
-//app.use("/static", express.static(path.join(__dirname, "public")));
 
 // set up database
 const database = require("./database");
@@ -23,23 +55,31 @@ app.set("view engine", "ejs");
 // hash password - crypto library
 const crypto = require("crypto");
 
-// port
-const PORT = 9100;
-// start listening for network activity
-app.listen(PORT, () => {
-  console.log("server is listening on localhost", PORT);
-});
+var userId = 0;
 
-// Step 2:create a GET "/login” route, which will display a form with the fields Email address and Password
+// middleware functions
+const redirectLogin = (req, res, next) => {
+  if (!req.session.userId) {
+    res.redirect("/login");
+  } else {
+    next();
+  }
+};
 
-//starting templating
+const redirectHome = (req, res, next) => {
+  if (req.session.userId) {
+    res.redirect("/" + userId);
+  } else {
+    next();
+  }
+};
 
 // routes
-app.get("/login", (req, res) => {
+app.get("/login", redirectHome, (req, res) => {
   res.render("pages/content_login_page");
 });
 
-app.post("/login", (req, res) => {
+app.post("/login", redirectHome, (req, res) => {
   const email = req.body.email;
   const hashedPassword = crypto
     .createHash("sha256")
@@ -56,8 +96,11 @@ app.post("/login", (req, res) => {
       } else {
         if (hashedPassword === user[0].password) {
           console.log("Correct email and password -> Login successful");
+          userId = user[0].user_id;
+          // put userId to the session object
+          req.session.userId = userId;
           // redirect to homepage
-          res.redirect("/" + user[0].user_id);
+          res.redirect("/" + userId);
         } else {
           console.log("Incorrect password");
           res.redirect("/login");
@@ -69,84 +112,86 @@ app.post("/login", (req, res) => {
     });
 });
 
-app.get("/", (req, res) => {
+/*app.get("/", redirectLogin, (req, res) => {
   database.query("SELECT * FROM schedules").then((schedules) => {
     res.render("pages/content_home", {
       schedules: schedules,
     });
   });
-});
+});*/
 
-app.get("/:userId(\\d+)/", (req, res) => {
+app.get("/:userId(\\d+)/", redirectLogin, (req, res) => {
   const userId = req.params.userId;
   var datetime = new Date();
   const currentDate = datetime.toString().slice(0, 15);
+
   database
-    //.query("SELECT * FROM schedules WHERE user_id = $1", [userId])
     .query(
       "SELECT schedules.user_id, users.firstname, users.surname, schedules.day, schedules.start_time, schedules.end_time FROM schedules LEFT JOIN users ON schedules.user_id = users.user_id;"
     )
-    //.query("SELECT * FROM schedules")
     .then((schedules) => {
-      var firstname = "";
-      var surname = "";
-      for (let i = 0; i < schedules.length; i++) {
-        if (schedules[i].user_id === Number(userId)) {
-          firstname = schedules[i].firstname;
-          surname = schedules[i].surname;
-        }
-      }
-      res.render("pages/content_home", {
-        schedules: schedules,
-        firstname: firstname,
-        surname: surname,
-        date: currentDate,
-      });
+      database
+        .query("SELECT firstname FROM users WHERE user_id = $1", [userId])
+        .then((firstname) => {
+          res.render("pages/content_home", {
+            userId: userId,
+            schedules: schedules,
+            firstname: firstname,
+            date: currentDate,
+          });
+        });
     });
 });
 
-app.get("/signup", (req, res) => {
+app.get("/signup", redirectHome, (req, res) => {
   res.render("pages/content_signup");
 });
+
 //regular expressions
 var letters = /^[A-Za-z]+$/;
-var numbers = /^[0-9]+$/;
 var letterNumber = /^[\.a-zA-Z0-9,!? ]*$/;
 var emailAdd = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-//signin page validation and post
 
-app.post("/signup", (req, res) => {
-  valid = true;
-  if (!firstname.value.match(letters)) {
-    firstname.style.border = "1px solid red";
+app.post("/signup", redirectHome, (req, res) => {
+  const surname = req.body.surname;
+  const firstname = req.body.firstname;
+  const email = req.body.email;
+  const password = req.body.password;
+  const confPassword = req.body.confPassword;
+
+  let valid = true;
+
+  if (!letters.test(surname)) {
+    console.log("Invalid surname");
     valid = false;
   }
-  if (!lastname.value.match(letters)) {
-    lastname.style.border = "1px solid red";
+  if (!letters.test(firstname)) {
+    console.log("Invalid firstname");
     valid = false;
   }
-  if (!email.value.match(emailAdd)) {
-    email.style.border = "1px solid red";
+  if (!emailAdd.test(email)) {
+    console.log("Invalid email");
     valid = false;
   }
-  if (!password.value.match(letterNumber)) {
-    password.style.border = "1px solid red";
+  if (!letterNumber.test(password)) {
+    console.log("Invalid password");
     valid = false;
   }
-  if (!conf - password === password) {
-    password.style.border = "1px solid red";
+  if (confPassword !== password) {
+    console.log("Password doesn't match");
     valid = false;
   }
+
   //If the email provided already exists in the database, registration must not be possible.
   if (valid) {
-    const hash = crypto
+    const hashedPassword = crypto
       .createHash("sha256")
-      .update(req.body.password)
+      .update(password)
       .digest("hex");
     database
       .query(
-        "INSERT INTO schedule(surname, firstname, email, password)values($1, $2, $3, $4);",
-        [req.body.lastname, req.body.firstname, req.body.email, hash]
+        "INSERT INTO users(surname, firstname, email, password) VALUES($1, $2, $3, $4);",
+        [surname, firstname, email, hashedPassword]
       )
       .then((newUser) => {
         res.redirect("/login");
@@ -155,4 +200,13 @@ app.post("/signup", (req, res) => {
         //add error messgae
       });
   }
+});
+
+app.get("/logout", redirectLogin, (req, res) => {
+  req.session.destroy((err) => {
+    res.redirect("/login");
+    if (err) {
+      return res.redirect("/" + userId);
+    }
+  });
 });
