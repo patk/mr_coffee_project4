@@ -153,7 +153,7 @@ app.get("/:userId(\\d+)/", redirectLogin, (req, res) => {
     });
 });
 
-app.get("/:userId(\\d+)/user", (req, res) => {
+app.get("/:userId(\\d+)/user", redirectLogin, (req, res) => {
   const userId = req.params.userId;
   database
     .query(
@@ -182,7 +182,7 @@ app.get("/:userId(\\d+)/user", (req, res) => {
     });
 });
 
-app.get("/:userId(\\d+)/scheduleManagement", (req, res) => {
+app.get("/:userId(\\d+)/scheduleManagement", redirectLogin, (req, res) => {
   const userId = req.params.userId;
   database
     .query(
@@ -211,7 +211,7 @@ app.get("/:userId(\\d+)/scheduleManagement", (req, res) => {
     });
 });
 
-app.post("/:userId(\\d+)/scheduleManagement", (req, res) => {
+app.post("/:userId(\\d+)/scheduleManagement", redirectLogin, (req, res) => {
   const userId = req.params.userId;
   const day = req.body.day;
   const start_time = req.body.startTime;
