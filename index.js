@@ -143,6 +143,21 @@ app.get("/:userId(\\d+)/", redirectLogin, (req, res) => {
     });
 });
 
+app.get("/:userId(\\d+)/user", (req, res) => {
+  const userId = req.params.userId;
+  database
+    .query(
+      "SELECT schedules.user_id, users.firstname, users.surname, users.email, schedules.day, schedules.start_time, schedules.end_time FROM schedules LEFT JOIN users ON schedules.user_id = users.user_id WHERE users.user_id = $1",
+      [userId]
+    )
+    .then((schedules) => {
+      res.render("pages/content_user", {
+        userId: userId,
+        schedules: schedules,
+      });
+    });
+});
+
 app.get("/signup", redirectHome, (req, res) => {
   res.render("pages/content_signup");
 });
