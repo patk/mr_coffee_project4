@@ -269,27 +269,36 @@ app.post("/signup", redirectHome, (req, res) => {
     valid = false;
   }
 
-  if (valid) {
-    const hashedPassword = crypto
-      .createHash("sha256")
-      .update(password)
-      .digest("hex");
-    database
-      .query(
-        "INSERT INTO users(surname, firstname, email, password) VALUES($1, $2, $3, $4);",
-        [surname, firstname, email, hashedPassword]
-      )
-      .then((newUser) => {
-        res.redirect("/login");
-      })
-      .catch((err) => {
-        res.send(err);
-      });
-  } else {
-    res.render("pages/content_signup", {
-      message: errorMessage,
+  // check whether email already exists
+  database
+    .query("SELECT * FROM users WHERE email = $1", [email])
+    .then((user) => {
+      if (email === user[0].email) {
+        errorMessage.push("Email already exists");
+        valid = false;
+      }
+      if (valid) {
+        const hashedPassword = crypto
+          .createHash("sha256")
+          .update(password)
+          .digest("hex");
+        database
+          .query(
+            "INSERT INTO users(surname, firstname, email, password) VALUES($1, $2, $3, $4);",
+            [surname, firstname, email, hashedPassword]
+          )
+          .then((newUser) => {
+            res.redirect("/login");
+          })
+          .catch((err) => {
+            res.send(err);
+          });
+      } else {
+        res.render("pages/content_signup", {
+          message: errorMessage,
+        });
+      }
     });
-  }
 });
 
 app.get("/logout", redirectLogin, (req, res) => {
