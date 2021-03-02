@@ -1,7 +1,57 @@
-<div class="form">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schedule website</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="nav-logo">
+          <img src="/assets/full_logo_white.png" alt="Mr.Coffee Full Logo" />
+        </div>
+        <ul class="nav-links">
+          <li><a href="/<%=userId%>">Home</a></li>
+          <li><a href="/">Schedule Management</a></li>
+          <li><a href="/logout">Log out</a></li>
+        </ul>
+      </nav>
+    </header>
+    <div class="banner-user">
+      <h1><%= user[0].firstname %> <%= user[0].surname %></h1>
+      <h3><%= user[0].email %></h3>
+    </div>
+  </body>
+
+  <h2><%= user[0].firstname %>'s schedules:</h2>
+
+  <table>
+    <tr>
+      <th>Day</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+    </tr>
+
+    <% for(let i = 0; i < schedules.length; i++) { %>
+    <tr>
+      <td><%= schedules[i].day %></td>
+      <td><%= schedules[i].start_time.toString().slice(0, 21) %></td>
+      <td><%= schedules[i].end_time.toString().slice(0, 21) %></td>
+    </tr>
+    <% } %>
+  </table>
+
+  <div class="schedule-form">
     <div class="form-header">
-        <img src="assets/logo_dark.png" alt="Mr.Coffee Logo (Dark)" />
-        <h1>Schedule Management</h1>
+        <h2>Add new schedule:</h2>
     </div>
         <div class="form-fields">
           <form id="schedule-form" method="POST" form action="/scheduleManagement">
@@ -33,5 +83,7 @@
                     <input type="submit">
             
                 </div>
+</html>
+
 
    

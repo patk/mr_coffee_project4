@@ -147,14 +147,45 @@ app.get("/:userId(\\d+)/user", (req, res) => {
   const userId = req.params.userId;
   database
     .query(
+      "SELECT day, start_time, end_time FROM schedules WHERE user_id = $1",
+      [userId]
+    )
+    .then((schedules) => {
+      database
+        .query(
+          "SELECT firstname, surname, email FROM users WHERE user_id = $1",
+          [userId]
+        )
+        .then((user) => {
+          res.render("pages/content_user", {
+            userId: userId,
+            user: user,
+            schedules: schedules,
+          });
+        });
+    });
+});
+
+app.get("/:userId(\\d+)/scheduleManagement", (req, res) => {
+  const userId = req.params.userId;
+  database
+    .query(
       "SELECT schedules.user_id, users.firstname, users.surname, users.email, schedules.day, schedules.start_time, schedules.end_time FROM schedules LEFT JOIN users ON schedules.user_id = users.user_id WHERE users.user_id = $1",
       [userId]
     )
     .then((schedules) => {
-      res.render("pages/content_user", {
-        userId: userId,
-        schedules: schedules,
-      });
+      database
+        .query(
+          "SELECT firstname, surname, email FROM users WHERE user_id = $1",
+          [userId]
+        )
+        .then((user) => {
+          res.render("pages/content_schedule_mng", {
+            userId: userId,
+            user: user,
+            schedules: schedules,
+          });
+        });
     });
 });
 
@@ -198,16 +229,6 @@ app.post("/signup", redirectHome, (req, res) => {
     valid = false;
   }
 
-  //If the email provided already exists in the database, registration must not be possible.
-
-  /*database
-    .query("SELECT email FROM users WHERE email = $1", [email])
-    .then((email) => {
-      res.render("pages/content_signup", {
-        //add mesagae
-      });
-    });*/
-
   if (valid) {
     const hashedPassword = crypto
       .createHash("sha256")
@@ -240,6 +261,7 @@ app.get("/logout", redirectLogin, (req, res) => {
   });
 });
 
+/*
 //schedule management form
 app.get("/scheduleManagement", (req, res) => {
   res.render("pages/content_schedule_mng");
