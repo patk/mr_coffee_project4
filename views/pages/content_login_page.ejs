@@ -8,6 +8,11 @@
   <div class="form-header">
       <img src="assets/logo_dark.png" alt="Mr.Coffee Logo (Dark)" />
       <h1>Login</h1>
+
+      <% if (typeof message !== 'undefined') {%>
+        <p><%= message %></p>
+    <% } %>
+    
   </div>
   <div class="form-fields">
     <form id="login-form" method="POST" form action="/login">

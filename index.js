@@ -85,14 +85,16 @@ app.post("/login", redirectHome, (req, res) => {
     .createHash("sha256")
     .update(req.body.password)
     .digest("hex");
-  // code login logic here
-  // search database to see if username and password match
+
+  let errorMessage = "";
   database
     .query("SELECT * FROM users WHERE email = $1", [email])
     .then((user) => {
       if (user.length === 0) {
-        console.log("User doesn't exist");
-        res.redirect("/login");
+        errorMessage = "Invalid email or password";
+        res.render("pages/content_login_page", {
+          message: errorMessage,
+        });
       } else {
         if (hashedPassword === user[0].password) {
           console.log("Correct email and password -> Login successful");
@@ -102,8 +104,10 @@ app.post("/login", redirectHome, (req, res) => {
           // redirect to homepage
           res.redirect("/" + userId);
         } else {
-          console.log("Incorrect password");
-          res.redirect("/login");
+          errorMessage = "Invalid email or password";
+          res.render("pages/content_login_page", {
+            message: errorMessage,
+          });
         }
       }
     })
