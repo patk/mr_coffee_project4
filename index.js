@@ -131,7 +131,7 @@ app.get("/:userId(\\d+)/", redirectLogin, (req, res) => {
 
   database
     .query(
-      "SELECT schedules.user_id, users.firstname, users.surname, schedules.day, schedules.start_time, schedules.end_time FROM schedules LEFT JOIN users ON schedules.user_id = users.user_id;"
+      "SELECT schedules.user_id, users.firstname, users.surname, schedules.day, schedules.start_time, schedules.end_time FROM schedules LEFT JOIN users ON schedules.user_id = users.user_id ORDER BY user_id, start_time;"
     )
     .then((schedules) => {
       database
@@ -151,7 +151,7 @@ app.get("/:userId(\\d+)/user", (req, res) => {
   const userId = req.params.userId;
   database
     .query(
-      "SELECT day, start_time, end_time FROM schedules WHERE user_id = $1",
+      "SELECT day, start_time, end_time FROM schedules WHERE user_id = $1 ORDER BY start_time",
       [userId]
     )
     .then((schedules) => {
@@ -174,7 +174,7 @@ app.get("/:userId(\\d+)/scheduleManagement", (req, res) => {
   const userId = req.params.userId;
   database
     .query(
-      "SELECT schedules.user_id, users.firstname, users.surname, users.email, schedules.day, schedules.start_time, schedules.end_time FROM schedules LEFT JOIN users ON schedules.user_id = users.user_id WHERE users.user_id = $1",
+      "SELECT schedules.user_id, users.firstname, users.surname, users.email, schedules.day, schedules.start_time, schedules.end_time FROM schedules LEFT JOIN users ON schedules.user_id = users.user_id WHERE users.user_id = $1 ORDER BY start_time",
       [userId]
     )
     .then((schedules) => {
@@ -191,6 +191,22 @@ app.get("/:userId(\\d+)/scheduleManagement", (req, res) => {
           });
         });
     });
+});
+
+app.post("/:userId(\\d+)/scheduleManagement", (req, res) => {
+  const userId = req.params.userId;
+  const day = req.body.day;
+  const start_time = req.body.startTime;
+  const end_time = req.body.endTime;
+  database
+    .query(
+      "INSERT INTO schedules(user_id, day, start_time, end_time) VALUES($1, $2, $3, $4);",
+      [userId, day, start_time, end_time]
+    )
+    .then((newSchedule) => {
+      res.redirect("/" + userId + "/scheduleManagement");
+    })
+    .catch((err) => {});
 });
 
 app.get("/signup", redirectHome, (req, res) => {
@@ -264,28 +280,3 @@ app.get("/logout", redirectLogin, (req, res) => {
     }
   });
 });
-
-/*
-//schedule management form
-app.get("/scheduleManagement", (req, res) => {
-  res.render("pages/content_schedule_mng");
-});
-
-/*app.post("/signup", (req, res) => {
-  const user_id = 1; //need to find out how to generate session uder_id
-  const day = req.body.day;
-  const start_time = req.body.startingTime;
-  const end_time = req.body.finishingTime;
-
-  database
-    .query(
-      "INSERT INTO schedules(user_id, day, start_time, end_time) VALUES($1, $2, $3, $4);",
-      [user_id, day, start_time, end_time]
-    )
-    .then((newSchedule) => {
-      res.redirect("/scheduleManagement");
-    })
-    .catch((err) => {
-      //add error messgae
-    });
-});*/

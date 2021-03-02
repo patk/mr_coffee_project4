@@ -53,36 +53,38 @@
     <div class="form-header">
         <h2>Add new schedule:</h2>
     </div>
-        <div class="form-fields">
-          <form id="schedule-form" method="POST" form action="/scheduleManagement">
-        
-            
-                    <div>
-                        <label for="Day" >Day</label>
-                            <select name="day" id="day">
-                                <option value="1">Monday</option>
-                                <option value="2">Tuesday</option>
-                                <option value="3">Wednesday</option>
-                                <option value="4">Audi</option>
-                                <option value="5">Monday</option>
-                                <option value="6">Saab</option>
-                                <option value="7">Mercedes</option>
-                            </select>
-                    </div>
-            
-                    <div>
-                        <label for="startingTime">Starting Time</label>
-                            <input type="text" name="startingTime" id="startingTime" required>
-                    </div>
-            
-                    <div>
-                        <label for="finishingTime" >Finishing Time</label>
-                            <input type="text" name="finishingTime" id="finishingTime" >
-                    </div>
-                    
-                    <input type="submit">
-            
-                </div>
+    
+    <div class="form-fields">
+        <form id="schedule-form" method="POST" form action="/<%=userId%>/scheduleManagement">
+
+        <div class="schedule-form-field">
+            <label for="day">Day</label>
+            <select name="day" id="day">
+                <option value=1>Monday</option>
+                <option value=2>Tuesday</option>
+                <option value=3>Wednesday</option>
+                <option value=4>Thursday</option>
+                <option value=5>Friday</option>
+                <option value=6>Saturday</option>
+                <option value=7>Sunday</option>
+            </select>
+        </div>    
+
+        <div class="schedule-form-field">
+            <label for="startTime">Start Time</label>
+            <input type="datetime-local" name="startTime" id="startTime" required>
+        </div>
+    
+        <div class="schedule-form-field">
+            <label for="endTime">End Time</label>
+            <input type="datetime-local" name="endTime" id="endTime" required>
+        </div>
+    
+    </div>
+    <div class="button-wrapper">
+        <button>Submit</button>
+    </div>
+  </div>
 </html>
 
 
