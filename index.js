@@ -143,7 +143,13 @@ app.get("/:userId(\\d+)/", redirectLogin, (req, res) => {
             firstname: firstname,
             date: currentDate,
           });
+        })
+        .catch((err) => {
+          res.send(err);
         });
+    })
+    .catch((err) => {
+      res.send(err);
     });
 });
 
@@ -166,7 +172,13 @@ app.get("/:userId(\\d+)/user", (req, res) => {
             user: user,
             schedules: schedules,
           });
+        })
+        .catch((err) => {
+          res.send(err);
         });
+    })
+    .catch((err) => {
+      res.send(err);
     });
 });
 
@@ -189,7 +201,13 @@ app.get("/:userId(\\d+)/scheduleManagement", (req, res) => {
             user: user,
             schedules: schedules,
           });
+        })
+        .catch((err) => {
+          res.send(err);
         });
+    })
+    .catch((err) => {
+      res.send(err);
     });
 });
 
@@ -206,7 +224,9 @@ app.post("/:userId(\\d+)/scheduleManagement", (req, res) => {
     .then((newSchedule) => {
       res.redirect("/" + userId + "/scheduleManagement");
     })
-    .catch((err) => {});
+    .catch((err) => {
+      res.send(err);
+    });
 });
 
 app.get("/signup", redirectHome, (req, res) => {
@@ -263,7 +283,7 @@ app.post("/signup", redirectHome, (req, res) => {
         res.redirect("/login");
       })
       .catch((err) => {
-        //add error messgae
+        res.send(err);
       });
   } else {
     res.render("pages/content_signup", {
